@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Trivia Game!</title>
+</head>
+<body>
+	<h1>Totally Trivial Trivia</h1>
+<div class="container">
+	<p class="time">Time Remaining: <span id="timeRemaining"></span></p>
+	<div class="gameContainer">
+		<p id="question">Question Here</p>
+		<button id="answer1"></button>
+		<button id="answer2"></button>
+		<button id="answer3"></button>
+		<button id="answer4"></button>
+	</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+	$('.container').hide();
+
+	$(document).on('keypress',function(event){
+		if(event.key == 'Enter'){
+			$('.container').show()
+		}
+	});
+</script>
+</body>
+</html>
