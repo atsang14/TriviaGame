@@ -6,25 +6,126 @@
 <body>
 	<h1>Totally Trivial Trivia</h1>
 <div class="container">
-	<p class="time">Time Remaining: <span id="timeRemaining"></span></p>
+	<p class="time">Time Remaining: <span id="timeRemaining"></span> seconds</p>
 	<div class="gameContainer">
-		<p id="question">Question Here</p>
-		<button id="answer1"></button>
-		<button id="answer2"></button>
-		<button id="answer3"></button>
-		<button id="answer4"></button>
+		<p class="question"></p>
+		<button class="option" id="answer1"></button>
+		<button class="option" id="answer2"></button>
+		<button class="option" id="answer3"></button>
+		<button class="option" id="answer4"></button>
 	</div>
+	<img id="image" src="">
+	<div class="theAnswer">
+	</div>
+	<div id="hiddenTimer" ></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript">
+	var timerStart		= 5;
+	// var timerStart2		= 5;
+	var time 	  		= 0;
+	// var time2 			= 0;
+	var j 				= 0;
+	var Question1		= {
+		question: 'How many legs does the Legs of Man have?',
+		answers: ['3','2','1','4'],
+		theAnswer: '3',
+		gifUrlWrong: 'https://media.giphy.com/media/FAx0A9azPd6Hm/giphy.gif'
+	}
+	var	Question2		= {
+		question: 'How tall am i?',
+		answers: ['5ft','6ft','4ft','7ft'],
+		theAnswer: '4ft',
+		gifUrlWrong: 'https://media3.giphy.com/media/4OJFCEeGzYGs0/giphy.gif'
+	}
+
+
+	var prompts		= [Question1, Question2]
+	
 	$('.container').hide();
 
 	$(document).on('keypress',function(event){
 		if(event.key == 'Enter'){
-			$('.container').show()
-		}
+			$('.container').show();
+			startGame();
+		}		
 	});
+
+	//Spencer Compton, Pitt the Younger, Arthur Balfour, Edward Heath
+	// start game
+	function startGame(){
+		$('.question').append(prompts[j].question);
+		
+		for(var i = 0; i<prompts[j].answers.length;i++){
+			$('#answer'+(i+1)).append(prompts[j].answers[i]);
+		}
+		
+		timer();
+	}
+
+	$(document).on('click','.option',function(){
+		userAnswer = $(this).text();
+		answer = prompts[j].theAnswer;
+		checkAnswer(answer, userAnswer);
+	})
+
+	// check if answer is correct or not and 
+	// changes game according on answer
+	function checkAnswer(answerToGuess, theUserAnswer){
+		debugger;
+
+		// if answer is correct
+		if( theUserAnswer == answerToGuess){
+			alert('hi');
+			clearInterval(time);
+			j++;
+			if(j<prompts.length){
+				startGame();
+			}else{
+				// here we want to show if somebody is wrong
+				// and thenn call a function
+				return;
+			}
+		} 
+		// if answer is not correct
+		else {
+			$('#image').attr('src', prompts[j].gifUrlWrong);
+			clearInterval(time);
+			j++;
+			if(j<prompts.length){
+				startGame();
+			}else{
+				return;
+			}
+		}
+	}
+
+	// this function starts the timer
+	function timer(){
+		$('#timeRemaining').text(timerStart--);
+		time = setInterval(
+			function(){
+				if(timerStart >= 0){
+				$('#timeRemaining').text(timerStart--);
+			}else{
+				$('.gameContainer').hide();
+				clearInterval(time);
+			}
+	 	}, 1000);
+	}
+
+	// function timer2(){
+	// 	time2= setInterval(
+	// 		function(){
+	// 			if(timerStart2 >= 0){
+	// 			$('#timeRemaining').text(timerStart2--);
+	// 		}else{
+	// 			$('.gameContainer').hide();
+	// 			clearInterval(time2);
+	// 		}
+	//  	}, 1000);
+	// }
 </script>
 </body>
 </html>
