@@ -1,7 +1,5 @@
-	// var timerStart		= 10;			// how long the timeRemaining should be
-	// var timer2Start		= 5;
-	var time;
-	var time2;
+	var time;							// This variable is used to reference specific timer
+	var time2;							// This variable is used to reference another specific timer
 	var correctAnswer	= 0;
 	var incorrectAnswer	= 0;
 	var unAnswered		= 0;
@@ -55,13 +53,11 @@
 		$('.container').show();
 		$('.testScore').hide();
 		$('.gameContainer').show();
-		debugger;
 		$('.question').text(prompts[j].question);	
 		for(var i = 0; i<prompts[j].answers.length;i++){
 			$('#answer'+(i+1)).text(prompts[j].answers[i]);
 		}
 		timer();
-		debugger;
 	}
 
 	// check if answer is correct or not and 
@@ -83,7 +79,7 @@
 	// this function takes an argument of a specific timer name
 	// this is used so that you can make unique timers.
 	function timer() {
-		var timerStart = 10
+		var timerStart = 30;
 		$('#timeRemaining').text(timerStart--);
 		time = setInterval(
 			function() {
@@ -103,8 +99,10 @@
 	 	}, 1000);
 	}
 
+	// timer2() incorporates a second timer after a user makes an initial guess.
+	// This serves the purpose of how long the '.outsideGame' div should last for
 	function timer2() {
-		var timer2Start		= 1;
+		var timer2Start		= 10;
 		$('#hiddenTimer').text(timer2Start--);
 		$('#gameContainer').hide()
 		time2 = setInterval(
@@ -120,6 +118,9 @@
 		},1000)
 	}
 
+	// this function checks the conditions if we should play again
+	// if the loop variable 'j' is less than the length of the array,
+	// then we should continue playing. If not, then we show the testScore page
 	function checkPlayAgain() {
 		if(j<prompts.length) {
 			startGame();
@@ -139,17 +140,18 @@
 		}
 	}
 
+	// this function changes the '.outsideGame' div to indicate the user has won
 	function won() {
 		$('#text').text('Correct!');
 		$('#answerCheck').text('');
 		$('.outsideGame').show();
 		timer2();
-		debugger;
 		$('#image').attr('src', prompts[j].gifUrlCorrect);
 		correctAnswer++;
 		j++;
 	}
 
+	// this function changes the '.outsideGame' div to indicate the user has lost
 	function loss() {
 		$('#text').text('Nope!');
 		$('.outsideGame').show();
@@ -168,17 +170,6 @@
 		j 				= 0;
 		startGame();
 	})
-
-
-
-
-
-
-
-
-
-
-
 
 
 
