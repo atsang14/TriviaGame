@@ -30,7 +30,7 @@
 	var prompts		= [Question1, Question2];
 	
 	$('.container').hide();
-
+	$('#hiddenTimer').hide();
 	// on pressing 'Enter', show the container
 	// and then start game.
 	$(document).on('keypress',function(event){
@@ -42,42 +42,38 @@
 	// when clicking a button with class 'option',
 	// that becomes the user's answer and timer stops
 	$(document).on('click','.option',function(){
-		var userAnswer = $(this).text();
-		var answer = prompts[j].theAnswer;
-		var target2 		= $('#hiddenTimer').text();
+		var userAnswer 	= $(this).text();
+		var answer 		= prompts[j].theAnswer;
+		var target2 	= $('#hiddenTimer').text();
 		clearInterval(time);
 		checkAnswer(answer, userAnswer);
 	})
 
-
-
-
-
-
-
 	// Spencer Compton, Pitt the Younger, Arthur Balfour, Edward Heath
 	// start game
-	function startGame(){
+	function startGame() {
 		$('.container').show();
 		$('.testScore').hide();
+		$('.gameContainer').show();
+		debugger;
 		$('.question').text(prompts[j].question);	
 		for(var i = 0; i<prompts[j].answers.length;i++){
 			$('#answer'+(i+1)).text(prompts[j].answers[i]);
 		}
 		timer();
-		
+		debugger;
 	}
 
 	// check if answer is correct or not and 
 	// changes game according on answer.
 	// arguments answerToGuess holds the correct answer
 	// while theUserAnsewr text() of the button the user pressed
-	function checkAnswer(answerToGuess, theUserAnswer){
+	function checkAnswer(answerToGuess, theUserAnswer) {
 		// if answer is correct
-		if( theUserAnswer == answerToGuess){
+		if( theUserAnswer == answerToGuess) {
 			won();
 		// if the answer is not correct
-		}else{
+		}else if (theUserAnswer != answerToGuess){
 			loss();
 		}
 		
@@ -86,32 +82,34 @@
 
 	// this function takes an argument of a specific timer name
 	// this is used so that you can make unique timers.
-	function timer(){
+	function timer() {
 		var timerStart = 10
 		$('#timeRemaining').text(timerStart--);
 		time = setInterval(
-			function(){
-				if(timerStart >= 0){
+			function() {
+				if(timerStart >= 0) {
 					$('#timeRemaining').text(timerStart--);
 				}else{
 					unAnswered++;
+					j++;
 					$('.gameContainer').hide();
 					$('.outsideGame').show();
 					clearInterval(time);
 					$('#text').text('Out of Time!');
 					$('#answerCheck').text('The Correct Answer Was: '+prompts[j].theAnswer);
+					$('#image').attr('src', 'https://media3.giphy.com/media/1j9lR5RXCgxAnD74dC/giphy.gif');
 					timer2();
 			}
 	 	}, 1000);
 	}
 
-	function timer2(){
-		var timer2Start		= 5;
+	function timer2() {
+		var timer2Start		= 1;
 		$('#hiddenTimer').text(timer2Start--);
 		$('#gameContainer').hide()
 		time2 = setInterval(
-			function(){
-				if(timer2Start >= 0){
+			function() {
+				if(timer2Start >= 0) {
 					$('#hiddenTimer').text(timer2Start--);
 				}else{
 					clearInterval(time2);
@@ -122,8 +120,8 @@
 		},1000)
 	}
 
-	function checkPlayAgain(){
-		if(j<prompts.length){
+	function checkPlayAgain() {
+		if(j<prompts.length) {
 			startGame();
 		} else {
 			// create reset function and then call here
@@ -137,13 +135,14 @@
 			$('#correct').text(testScore.correctAnswer);
 			$('#incorrect').text(testScore.incorrectAnswer);
 			$('#unanswered').text(testScore.unAnswered)
-
+			$('restorePage').show();
 		}
 	}
 
-	function won(){
-		$('.outsideGame').show();
+	function won() {
 		$('#text').text('Correct!');
+		$('#answerCheck').text('');
+		$('.outsideGame').show();
 		timer2();
 		debugger;
 		$('#image').attr('src', prompts[j].gifUrlCorrect);
@@ -151,7 +150,8 @@
 		j++;
 	}
 
-	function loss(){
+	function loss() {
+		$('#text').text('Nope!');
 		$('.outsideGame').show();
 		$('#answerCheck').text('The Correct Answer Was: ' + prompts[j].theAnswer);
 		$('#image').attr('src', prompts[j].gifUrlWrong);
@@ -160,7 +160,14 @@
 		j++;
 	}
 
-
+	// Reset function
+	$(document).on('click','#restorePage', function() {
+		correctAnswer	= 0;
+		incorrectAnswer	= 0;
+		unAnswered 		= 0;
+		j 				= 0;
+		startGame();
+	})
 
 
 
