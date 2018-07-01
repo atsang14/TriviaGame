@@ -1,23 +1,10 @@
+	var theUrl 			= 'https://opentdb.com/api.php?amount=10'; // trivia API link
 	var time;							// This variable is used to reference specific timer
 	var time2;							// This variable is used to reference another specific timer
 	var correctAnswer	= 0;
 	var incorrectAnswer	= 0;
 	var unAnswered		= 0;
 	var j 				= 0;			// this is used to loop through the prompts array
-	var Question1		= {
-		question: 'How many legs does the Legs of Man have?',
-		answers: ['3','2','1','4'],
-		theAnswer: '3',
-		gifUrlWrong: 'https://media.giphy.com/media/FAx0A9azPd6Hm/giphy.gif',
-		gifUrlCorrect: 'https://media1.giphy.com/media/26uTqJWUxDMgWc5pu/giphy.gif'
-	}
-	var	Question2		= {
-		question: 'How tall am i?',
-		answers: ['5ft','6ft','4ft','7ft'],
-		theAnswer: '4ft',
-		gifUrlWrong: 'https://media3.giphy.com/media/4OJFCEeGzYGs0/giphy.gif',
-		gifUrlCorrect: 'https://media1.giphy.com/media/26uTqJWUxDMgWc5pu/giphy.gif'
-	}
 	var testScore		= {
 		question: 'All done, heres how you did!',
 		correct_answer: 0,
@@ -25,7 +12,26 @@
 		unAnswered: 0
 	}
 
-	var prompts		= [Question1, Question2];
+	var prompts		= [];				// this array will hold all the objects from the API
+
+	// after using this ajax function, 
+	// .then runs a function that will copy all the neccessary keys in the objects into 
+	// prompts array
+	$.ajax({
+		url: theUrl
+	}).then(function(res) {
+		var results = res.results; // array that contains all the questions.
+
+		for(var k = 0; k < results.length; k++){
+			
+			prompts.push(results[k]);
+			prompts[k].answers = prompts[k].incorrect_answers;
+			prompts[k].theAnswers = prompts[k].correct_answer;
+			prompts[k].answers.push(prompts[k].theAnswers);
+
+		}		
+
+	});
 	
 	$('.container').hide();
 	$('#hiddenTimer').hide();
@@ -41,7 +47,7 @@
 	// that becomes the user's answer and timer stops
 	$(document).on('click','.option',function(){
 		var userAnswer 	= $(this).text();
-		var answer 		= prompts[j].theAnswer;
+		var answer 		= prompts[j].theAnswers;
 		var target2 	= $('#hiddenTimer').text();
 		clearInterval(time);
 		checkAnswer(answer, userAnswer);
@@ -53,10 +59,19 @@
 		$('.container').show();
 		$('.testScore').hide();
 		$('.gameContainer').show();
-		$('.question').text(prompts[j].question);	
-		for(var i = 0; i<prompts[j].answers.length;i++){
-			$('#answer'+(i+1)).text(prompts[j].answers[i]);
+		$('.buttonContainer').text('');
+
+		// $('.question').text(prompts[j].question);	
+		// for(var i = 0; i<prompts[j].answers.length;i++){
+		// 	$('#answer'+(i+1)).text(prompts[j].answers[i]);
+		// }
+		$('.question').text(prompts[j].question);
+		for(var i = 0; i < prompts[j].answers.length; i++) {			
+			var button = $('<button>').attr('class','option').attr('id', 'answer'+i);
+			button.text(prompts[j].answers[i]);
+			$('.buttonContainer').append(button);
 		}
+		
 		timer();
 	}
 
@@ -79,7 +94,7 @@
 	// this function takes an argument of a specific timer name
 	// this is used so that you can make unique timers.
 	function timer() {
-		var timerStart = 30;
+		var timerStart = 5;
 		$('#timeRemaining').text(timerStart--);
 		time = setInterval(
 			function() {
@@ -92,7 +107,7 @@
 					$('.outsideGame').show();
 					clearInterval(time);
 					$('#text').text('Out of Time!');
-					$('#answerCheck').text('The Correct Answer Was: '+prompts[j].theAnswer);
+					$('#answerCheck').text('The Correct Answer Was: '+prompts[j].theAnswers);
 					$('#image').attr('src', 'https://media3.giphy.com/media/1j9lR5RXCgxAnD74dC/giphy.gif');
 					timer2();
 			}
@@ -102,7 +117,7 @@
 	// timer2() incorporates a second timer after a user makes an initial guess.
 	// This serves the purpose of how long the '.outsideGame' div should last for
 	function timer2() {
-		var timer2Start		= 10;
+		var timer2Start		= 3;
 		$('#hiddenTimer').text(timer2Start--);
 		$('#gameContainer').hide()
 		time2 = setInterval(
@@ -115,7 +130,7 @@
 					$('.outsideGame').hide();
 					checkPlayAgain();
 				}
-		},1000)
+		},1000);
 	}
 
 	// this function checks the conditions if we should play again
@@ -146,7 +161,7 @@
 		$('#answerCheck').text('');
 		$('.outsideGame').show();
 		timer2();
-		$('#image').attr('src', prompts[j].gifUrlCorrect);
+		$('#image').attr('src', 'https://media1.giphy.com/media/26uTqJWUxDMgWc5pu/giphy.gif'); // prompts[j].gifUrlCorrect);
 		correctAnswer++;
 		j++;
 	}
@@ -155,8 +170,8 @@
 	function loss() {
 		$('#text').text('Nope!');
 		$('.outsideGame').show();
-		$('#answerCheck').text('The Correct Answer Was: ' + prompts[j].theAnswer);
-		$('#image').attr('src', prompts[j].gifUrlWrong);
+		$('#answerCheck').text('The Correct Answer Was: ' + prompts[j].theAnswers);
+		$('#image').attr('src', 'https://media3.giphy.com/media/4OJFCEeGzYGs0/giphy.gif');// prompts[j].gifUrlWrong);
 		incorrectAnswer++;
 		timer2();
 		j++;
@@ -170,11 +185,3 @@
 		j 				= 0;
 		startGame();
 	})
-
-
-
-
-
-
-
-
